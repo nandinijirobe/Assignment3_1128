@@ -148,6 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 421ae732e3c556944a6945d88d738e78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  touchCount: 0
+  mouseClickCount: 0
+  updateCallCount: 0
 --- !u!4 &193996744
 Transform:
   m_ObjectHideFlags: 0
@@ -890,8 +893,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f877b74bbc2e9ab4397ca058c10fe5d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaneSelection
-  selectedPlaneMaterial: {fileID: 2100000, guid: 9157ae927725b4d60803d3c3a35c69b0, type: 2}
-  virtualProxySize: 1
+  raycastManager: {fileID: 0}
+  planeManager: {fileID: 0}
+  arCamera: {fileID: 0}
+  selectedMaterial: {fileID: 2100000, guid: 9157ae927725b4d60803d3c3a35c69b0, type: 2}
 --- !u!4 &2512387470860572925
 Transform:
   m_ObjectHideFlags: 0
