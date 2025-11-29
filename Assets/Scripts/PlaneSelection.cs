@@ -50,7 +50,7 @@ public class PlaneSelection : MonoBehaviour
 
         // Turn the tapped plane green
         //plane.GetComponent<MeshRenderer>().material.color = Color.green;
-        plane.GetComponent<MeshRenderer>().material = selectedMaterial
+        plane.GetComponent<MeshRenderer>().material = selectedMaterial;
 
         // Hide all OTHER planes
         foreach (ARPlane p in planeManager.trackables)
