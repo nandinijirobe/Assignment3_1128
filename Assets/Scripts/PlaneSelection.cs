@@ -10,6 +10,9 @@ public class PlaneSelection : MonoBehaviour
     public Camera arCamera;
     public Material selectedMaterial;
 
+    private ARPlane selectedPlane = null;
+    private GameObject virtualProxy = null;
+
     private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     void Awake()
@@ -41,11 +44,13 @@ public class PlaneSelection : MonoBehaviour
 
     void SelectPlane(ARPlane plane)
     {
-        // Turn the tapped plane green
-        plane.GetComponent<MeshRenderer>().material.color = Color.green;
 
-        // Disable the ARPlane component to "freeze" it
-        //plane.enabled = false;
+        selectedPlane = plane;
+
+
+        // Turn the tapped plane green
+        //plane.GetComponent<MeshRenderer>().material.color = Color.green;
+        plane.GetComponent<MeshRenderer>().material = selectedMaterial
 
         // Hide all OTHER planes
         foreach (ARPlane p in planeManager.trackables)
@@ -59,34 +64,23 @@ public class PlaneSelection : MonoBehaviour
         // Stop all plane detection
         planeManager.requestedDetectionMode = PlaneDetectionMode.None;
 
-        //ARPlane planeComponent = plane.GetComponent<ARPlane>();
-        //if (planeComponent != null)
-        //    Destroy(planeComponent);
-
-        // Optional: also stop showing the green plane mesh after selection
-        // plane.gameObject.SetActive(false);
-        
+        virtualProxy = plane.gameObject;
 
 
-        //// Record the plane’s position and rotation
-        //Vector3 position = plane.transform.position;
-        //Quaternion rotation = plane.transform.rotation;
+    }
 
-        //// Hide all other planes
-        //foreach (ARPlane p in planeManager.trackables)
-        //{
-        //    if (p != plane)
-        //        p.gameObject.SetActive(false);
-        //}
+    public bool IsPlaneSelected()
+    {
+        return planeManager.requestedDetectionMode == PlaneDetectionMode.None;
+    }
 
-        //// Stop plane detection
-        //planeManager.requestedDetectionMode = PlaneDetectionMode.None;
+    public ARPlane GetSelectedPlane()
+    {
+        return selectedPlane;
+    }
 
-        //// Create a virtual proxy at that location
-        //GameObject proxy = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //proxy.transform.position = position;
-        //proxy.transform.rotation = rotation;
-        //proxy.transform.localScale = new Vector3(0.5f, 0.01f, 0.5f);
-        //proxy.GetComponent<MeshRenderer>().material = selectedMaterial;
+    public GameObject GetVirtualProxy()
+    {
+        return virtualProxy;
     }
 }

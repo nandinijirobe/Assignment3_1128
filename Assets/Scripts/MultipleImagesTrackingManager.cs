@@ -1,86 +1,102 @@
-// Simplified marker spawner - spawns objects once when marker is detected
-using System.Collections.Generic;
-using System.Diagnostics;
+// Tutorial used: https://www.youtube.com/watch?v=7GiDoWviQEM
+
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using System.Collections.Generic;
 
-public class SimpleMarkerSpawner : MonoBehaviour
+
+public class MultipleImagesTrackingManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] prefabsToSpawn; // List of prefabs to spawn for each tracked image
+    private ARTrackedImageManager _aRTrackedImageManager; // Reference to ARTrackedImageManager
+    private Dictionary<string, GameObject> _arObjects = new Dictionary<string, GameObject>(); // contains image name and spawned prefab
 
-    private ARTrackedImageManager _aRTrackedImageManager;
-    private Dictionary<string, bool> _alreadySpawned = new Dictionary<string, bool>(); // Track which markers have spawned objects
-
+    // Get reference to ARTrackedImageManager
     private void Awake()
     {
         _aRTrackedImageManager = GetComponent<ARTrackedImageManager>();
+        _arObjects = new Dictionary<string, GameObject>();
     }
 
-    private void OnEnable()
+    // Listen the events related to any change in TrackedImageManager
+
+    private void Start()
     {
+        // Listen to tracked images changed event
         _aRTrackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
+
+        // Spawn prefabs for each tracked image and hide them initially
+        foreach (GameObject prefab in prefabsToSpawn)
+        {
+            GameObject newARObject = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            newARObject.name = prefab.name;
+            newARObject.SetActive(false); // Hide initially
+            _arObjects.Add(newARObject.name, newARObject);
+        }
+
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
+        // Unsubscribe from tracked images changed event
         _aRTrackedImageManager.trackedImagesChanged -= OnTrackedImageChanged;
+
     }
+
 
     private void OnTrackedImageChanged(ARTrackedImagesChangedEventArgs eventArgs)
     {
-        // Only care about newly detected markers
         foreach (ARTrackedImage trackedImage in eventArgs.added)
         {
-            SpawnObjectAtMarker(trackedImage);
+            // show, hide or position the gameobject based on the tracked image
+            UpdateTrackedImage(trackedImage);
         }
+
+        foreach (ARTrackedImage trackedImage in eventArgs.updated)
+        {
+            // show, hide or position the gameobject based on the tracked image
+            UpdateTrackedImage(trackedImage);
+        }
+
+        foreach (ARTrackedImage trackedImage in eventArgs.removed)
+        {
+            // show, hide or position the gameobject based on the tracked image
+            _arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
+        }
+
     }
 
-    private void SpawnObjectAtMarker(ARTrackedImage trackedImage)
+    private void UpdateTrackedImage(ARTrackedImage trackedImage)
     {
-        string markerName = trackedImage.referenceImage.name;
+        //// check tracking status of the tracked image
+        //if (trackedImage.trackingState == TrackingState.Limited || trackedImage.trackingState == TrackingState.None)
+        //{
 
-        // Check if we've already spawned for this marker
-        if (_alreadySpawned.ContainsKey(markerName) && _alreadySpawned[markerName])
-        {
-            return; // Already spawned, don't spawn again
-        }
+        //    _arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
+        //    return;
+        //}
 
-        // Find the matching prefab by name
-        GameObject prefabToSpawn = null;
-        foreach (GameObject prefab in prefabsToSpawn)
+        //// show, hide or position the gameobject based on the tracked image
+        //if (prefabsToSpawn != null)
+        //{
+        //    _arObjects[trackedImage.referenceImage.name].SetActive(true);
+        //    _arObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
+        //}
+
+        // Only spawn the object once, when the image is first detected
+        if (trackedImage.trackingState == TrackingState.Tracking)
         {
-            if (prefab.name == markerName)
+            GameObject obj = _arObjects[trackedImage.referenceImage.name];
+
+            if (!obj.activeSelf)
             {
-                prefabToSpawn = prefab;
-                break;
+                obj.SetActive(true);
+                obj.transform.position = trackedImage.transform.position;
+                obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
             }
         }
 
-        // Spawn the object at the marker's position
-        if (prefabToSpawn != null)
-        {
-            GameObject spawnedObject = Instantiate(
-                prefabToSpawn,
-                trackedImage.transform.position,
-                trackedImage.transform.rotation
-            );
-
-            spawnedObject.name = markerName + "_spawned";
-            _alreadySpawned[markerName] = true;
-
-            UnityEngine.Debug.Log($"Spawned {spawnedObject.name} at marker position");
-        }
-        else
-        {
-            UnityEngine.Debug.LogWarning($"No prefab found matching marker name: {markerName}");
-        }
     }
 
-    // Optional: Reset to allow re-spawning (for testing or reset button)
-    public void ResetSpawning()
-    {
-        _alreadySpawned.Clear();
-        UnityEngine.Debug.Log("Spawning reset - markers can spawn objects again");
-    }
 }
