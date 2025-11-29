@@ -75,5 +75,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5733663534497772307, guid: 57035b75116f30f4eadb1e73b6eb3409, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5907915491397506102}
   m_SourcePrefab: {fileID: 100100000, guid: 57035b75116f30f4eadb1e73b6eb3409, type: 3}
+--- !u!1 &8950786635662513766 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5733663534497772307, guid: 57035b75116f30f4eadb1e73b6eb3409, type: 3}
+  m_PrefabInstance: {fileID: 3721527583656109429}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5907915491397506102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950786635662513766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19bfd3b8976a2c84f968e51bae7bb6d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleGestureInteractor
+  raycastManager: {fileID: 0}
+  arCamera: {fileID: 0}
+  dragSmoothing: 10
+  rotateSpeed: 0.2
+  minScale: 0.1
+  maxScale: 3

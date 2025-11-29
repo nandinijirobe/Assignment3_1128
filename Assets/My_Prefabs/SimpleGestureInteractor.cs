@@ -25,6 +25,19 @@ public class SimpleGestureInteractor : MonoBehaviour
     private Vector3 _initialScale;
     private float _lastTwoFingerAngle;
 
+
+    void Awake()
+    {
+        if (raycastManager == null)
+        {
+            raycastManager = FindObjectOfType<ARRaycastManager>();
+        }
+        if (arCamera == null)
+        {
+            arCamera = Camera.main;
+        }
+    }
+
     void Start()
     {
         _targetPos = transform.position;
