@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.UI;
+using System.Collections;
+using System.Runtime.ExceptionServices;
+
 
 public class SimpleGestureInteractor : MonoBehaviour
 {
@@ -12,12 +15,23 @@ public class SimpleGestureInteractor : MonoBehaviour
     private bool isTouchingPlane = false;
     public Text statusText;
 
+    private Rigidbody rb;
+
+    private Vector3 firstPosition = Vector3.zero;
+
+    private ARPlane touchedPlane = null;
+    private Coroutine resetCoroutine = null;
+
+
 
     void Awake()
     {
         // Get the AR camera in the scene
         arCamera = Camera.main;
         statusText = GameObject.FindObjectOfType<Text>();
+        rb = GetComponent<Rigidbody>();
+        firstPosition = transform.position; // store the initial position
+
         if (arCamera == null)
         {
             UnityEngine.Debug.LogError("AR Camera not found! Make sure your scene has an AR Camera.");
@@ -40,6 +54,31 @@ public class SimpleGestureInteractor : MonoBehaviour
                 {
                     // Toggle follow state
                     isFollowing = !isFollowing;
+
+                    if (!isFollowing)
+                    {
+                        if (!isTouchingPlane)
+                        {
+                            statusText.text = "FALLING OMG";
+                            //rb.isKinematic = false; // let physics take over and let it fall down
+                            rb.constraints &= ~RigidbodyConstraints.FreezePositionY; // unfreeze Y
+                            rb.useGravity = true;
+                            if (resetCoroutine != null)
+                            {
+                                // // Stop any existing reset
+                                StopCoroutine(resetCoroutine);
+                            }
+
+                            resetCoroutine = StartCoroutine(goToBackInitalPosition());
+                        }
+                        else {
+
+                            // become child of the plane to stay in place
+                            rb.constraints = RigidbodyConstraints.FreezeAll;
+                            transform.SetParent(touchedPlane.transform);
+                        }
+
+                    } 
                 }
             }
         }
@@ -55,11 +94,46 @@ public class SimpleGestureInteractor : MonoBehaviour
         }
     }
 
+    private IEnumerator goToBackInitalPosition() {
+        yield return new WaitForSeconds(3f);
+        isTouchingPlane = false;
+        touchedPlane = null;
 
+  
+        //rb.isKinematic = false;
+        rb.useGravity = false;
+        transform.position = firstPosition + Vector3.up * 0.1f;
+
+        yield return new WaitForFixedUpdate();
+        transform.position = firstPosition;
+
+
+
+        Collider collider = GetComponent<Collider>();
+        if (collider == null)
+        {
+            statusText.text = "Missing! Re-adding BoxCollider...";
+            BoxCollider newCol = gameObject.AddComponent<BoxCollider>();
+            newCol.enabled = true;
+
+            if (newCol != null) {
+                statusText.text = "Enabled";
+            }
+        } else {
+            statusText.text = "Exists.";
+            collider.enabled = true;
+        }
+
+        rb.constraints |= RigidbodyConstraints.FreezePositionY; // freeze Y position again
+        //statusText.text = "You may continue...";
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("HorizontalPlane")) { 
+        statusText.text = "checking if hitting plane...";
+        if (collision.collider.CompareTag("HorizontalPlane")) {
+            statusText.text = "YES touching plane";
+            touchedPlane = collision.collider.GetComponent<ARPlane>();
             isTouchingPlane = true;
         }
     }
@@ -69,6 +143,7 @@ public class SimpleGestureInteractor : MonoBehaviour
         if (collision.collider.CompareTag("HorizontalPlane"))
         {
             isTouchingPlane = false;
+            touchedPlane = null;
         }
     }
 
@@ -78,12 +153,12 @@ public class SimpleGestureInteractor : MonoBehaviour
 
         if (isTouchingPlane)
         {
-            statusText.text = "YES — touching plane";
+            //statusText.text = "YES touching plane";
             statusText.color = Color.green;
         }
         else
         {
-            statusText.text = "NO — not touching plane";
+            //statusText.text = "NO not touching plane";
             statusText.color = Color.red;
         }
     }
