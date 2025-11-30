@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.UI;
 
 public class SimpleGestureInteractor : MonoBehaviour
 {
@@ -9,10 +9,15 @@ public class SimpleGestureInteractor : MonoBehaviour
     private bool isFollowing = false;        // is the object currently following the camera?
     private Camera arCamera;
 
+    private bool isTouchingPlane = false;
+    public Text statusText;
+
+
     void Awake()
     {
         // Get the AR camera in the scene
         arCamera = Camera.main;
+        statusText = GameObject.FindObjectOfType<Text>();
         if (arCamera == null)
         {
             UnityEngine.Debug.LogError("AR Camera not found! Make sure your scene has an AR Camera.");
@@ -21,6 +26,8 @@ public class SimpleGestureInteractor : MonoBehaviour
 
     void Update()
     {
+
+        UpdateTouchingUI();
         // Detect tap on this object
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
@@ -47,4 +54,38 @@ public class SimpleGestureInteractor : MonoBehaviour
             //transform.LookAt(arCamera.transform);
         }
     }
+
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("HorizontalPlane")) { 
+            isTouchingPlane = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.CompareTag("HorizontalPlane"))
+        {
+            isTouchingPlane = false;
+        }
+    }
+
+    private void UpdateTouchingUI()
+    {
+        if (statusText == null) return;
+
+        if (isTouchingPlane)
+        {
+            statusText.text = "YES — touching plane";
+            statusText.color = Color.green;
+        }
+        else
+        {
+            statusText.text = "NO — not touching plane";
+            statusText.color = Color.red;
+        }
+    }
+
 }

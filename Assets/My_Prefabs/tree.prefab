@@ -78,29 +78,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6951083895644441743, guid: 771f05a17941f8f4eaefd2f026aba470, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6455782408605537689}
+      addedObject: {fileID: 7453374521777468557}
     - targetCorrespondingSourceObject: {fileID: 6951083895644441743, guid: 771f05a17941f8f4eaefd2f026aba470, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7453374521777468557}
+      addedObject: {fileID: -372150364226405609}
   m_SourcePrefab: {fileID: 100100000, guid: 771f05a17941f8f4eaefd2f026aba470, type: 3}
 --- !u!1 &7140422697382903702 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6951083895644441743, guid: 771f05a17941f8f4eaefd2f026aba470, type: 3}
   m_PrefabInstance: {fileID: 243429009989808921}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6455782408605537689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7140422697382903702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19bfd3b8976a2c84f968e51bae7bb6d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleGestureInteractor
-  distanceFromCamera: 0.5
 --- !u!54 &7453374521777468557
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -128,3 +115,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &-372150364226405609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140422697382903702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19bfd3b8976a2c84f968e51bae7bb6d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleGestureInteractor
+  distanceFromCamera: 0.5
