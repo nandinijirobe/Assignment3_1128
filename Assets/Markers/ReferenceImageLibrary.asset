@@ -27,7 +27,7 @@ MonoBehaviour:
       m_GuidHigh: 7767142928775775848
     m_Size: {x: 0, y: 0}
     m_SpecifySize: 0
-    m_Name: tree
+    m_Name: trees
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
       m_GuidLow: 4727148986086526629
@@ -37,7 +37,7 @@ MonoBehaviour:
       m_GuidHigh: 339948145732562536
     m_Size: {x: 0, y: 0}
     m_SpecifySize: 0
-    m_Name: building
+    m_Name: buildings
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
       m_GuidLow: 5656719333121169472
@@ -47,5 +47,5 @@ MonoBehaviour:
       m_GuidHigh: 14830424402867627257
     m_Size: {x: 0, y: 0}
     m_SpecifySize: 0
-    m_Name: bench
+    m_Name: streetDecor
     m_Texture: {fileID: 0}

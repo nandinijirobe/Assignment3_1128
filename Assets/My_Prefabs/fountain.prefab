@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1362612735618395599, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_Name
-      value: fountain Variant
+      value: fountain
       objectReference: {fileID: 0}
     - target: {fileID: 1847366163110393717, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_RootOrder
@@ -18,15 +18,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1847366163110393717, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.005
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 1847366163110393717, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.005
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 1847366163110393717, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.005
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 1847366163110393717, guid: f248f39659cf356418d302511cdce0bc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -101,6 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleGestureInteractor
   distanceFromCamera: 0.5
+  statusText: {fileID: 0}
 --- !u!54 &-7681752580552681506
 Rigidbody:
   m_ObjectHideFlags: 0

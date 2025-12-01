@@ -22,10 +22,33 @@ public class SimpleGestureInteractor : MonoBehaviour
     private ARPlane touchedPlane = null;
     private Coroutine resetCoroutine = null;
 
+    public Button leftButton;
+    public Button rightButton;
+
+    private bool listenersAdded = false;
+
+    public Vector3 initalPosition = Vector3.zero;
+
+    public bool fallen = false;
+
 
 
     void Awake()
     {
+
+        //leftButton = GameObject.Find("LeftButton_GameObject").GetComponent<Button>();
+        //if (leftButton == null)
+        //{
+        //    UnityEngine.Debug.LogError("left Buttons not found! Make sure your scene has LeftButton_GameObject and RightButton_GameObject.");
+        //}
+
+        //rightButton = GameObject.Find("RightButton_GameObject").GetComponent<Button>();
+
+        //if (leftButton == null)
+        //{
+        //    UnityEngine.Debug.LogError("right Buttons not found! Make sure your scene has LeftButton_GameObject and RightButton_GameObject.");
+        //}
+
         // Get the AR camera in the scene
         arCamera = Camera.main;
         statusText = GameObject.FindObjectOfType<Text>();
@@ -36,6 +59,37 @@ public class SimpleGestureInteractor : MonoBehaviour
         {
             UnityEngine.Debug.LogError("AR Camera not found! Make sure your scene has an AR Camera.");
         }
+
+        
+    }
+
+    //void Start()
+    //{
+    //    leftButton.onClick.AddListener(RotateLeft);
+    //    rightButton.onClick.AddListener(RotateRight);
+    //}
+
+
+public void RotateLeft()
+    {
+        statusText.text = "Left button clicked";
+        if (isFollowing)
+        {
+            statusText.text = "Rotating left";
+            transform.Rotate(0, -15f, 0); // Rotate left by 15 degrees
+        }
+
+    }
+
+    public void RotateRight()
+    {
+        statusText.text = "Right button clicked";
+        if (isFollowing)
+        {
+            statusText.text = "Rotating Right";
+            transform.Rotate(0, 15f, 0); // Rotate left by 15 degrees
+        }
+
     }
 
     void Update()
@@ -62,6 +116,7 @@ public class SimpleGestureInteractor : MonoBehaviour
                             statusText.text = "FALLING OMG";
                             //rb.isKinematic = false; // let physics take over and let it fall down
                             rb.constraints &= ~RigidbodyConstraints.FreezePositionY; // unfreeze Y
+                            
                             rb.useGravity = true;
                             if (resetCoroutine != null)
                             {
@@ -72,7 +127,7 @@ public class SimpleGestureInteractor : MonoBehaviour
                             resetCoroutine = StartCoroutine(goToBackInitalPosition());
                         }
                         else {
-
+                            
                             // become child of the plane to stay in place
                             rb.constraints = RigidbodyConstraints.FreezeAll;
                             transform.SetParent(touchedPlane.transform);
@@ -81,11 +136,21 @@ public class SimpleGestureInteractor : MonoBehaviour
                     } 
                 }
             }
+
         }
 
-        // If following, move the object in front of the camera
-        if (isFollowing)
-        {
+
+        //if (listenersAdded == false && leftButton != null && rightButton != null) { 
+        //    statusText.text = "Adding listeners";
+        //    leftButton.onClick.AddListener(RotateLeft);
+        //    rightButton.onClick.AddListener(RotateRight);
+        //    listenersAdded = true;
+        //} 
+
+         // If following, move the object in front of the camera
+         if (isFollowing){
+            
+
             Vector3 targetPosition = arCamera.transform.position + arCamera.transform.forward * distanceFromCamera;
             transform.position = targetPosition;
 
@@ -102,10 +167,11 @@ public class SimpleGestureInteractor : MonoBehaviour
   
         //rb.isKinematic = false;
         rb.useGravity = false;
-        transform.position = firstPosition + Vector3.up * 0.1f;
+        fallen = true;
+        //transform.position = initalPosition + Vector3.up * 0.1f;
 
-        yield return new WaitForFixedUpdate();
-        transform.position = firstPosition;
+        //yield return new WaitForFixedUpdate();
+        //transform.position = initalPosition;
 
 
 
@@ -130,7 +196,7 @@ public class SimpleGestureInteractor : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        statusText.text = "checking if hitting plane...";
+        //statusText.text = "checking if hitting plane...";
         if (collision.collider.CompareTag("HorizontalPlane")) {
             statusText.text = "YES touching plane";
             touchedPlane = collision.collider.GetComponent<ARPlane>();
@@ -162,5 +228,7 @@ public class SimpleGestureInteractor : MonoBehaviour
             statusText.color = Color.red;
         }
     }
+
+    
 
 }

@@ -1,22 +1,35 @@
 // Tutorial used: https://www.youtube.com/watch?v=7GiDoWviQEM
 
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-using System.Collections.Generic;
 
 
 public class MultipleImagesTrackingManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] prefabsToSpawn; // List of prefabs to spawn for each tracked image
+    //[SerializeField] private GameObject[] prefabsToSpawn; // List of prefabs to spawn for each tracked image
+
+    [SerializeField] private GameObject[] treesToSpawn;
+    [SerializeField] private GameObject[] buildingsToSpawn;
+    [SerializeField] private GameObject[] streetDecorToSpawn;
+    public Text statusText;
+    private bool enableMarkerTracking = false;
+
+
     private ARTrackedImageManager _aRTrackedImageManager; // Reference to ARTrackedImageManager
-    private Dictionary<string, GameObject> _arObjects = new Dictionary<string, GameObject>(); // contains image name and spawned prefab
+    private Dictionary<string, List<GameObject>> _arObjects = new Dictionary<string, List<GameObject>>(); // contains image name and spawned prefab
+
+    public GameObject XROrigin;
+    private PlaneSelection planeSelectionScript;
 
     // Get reference to ARTrackedImageManager
     private void Awake()
     {
         _aRTrackedImageManager = GetComponent<ARTrackedImageManager>();
-        _arObjects = new Dictionary<string, GameObject>();
+        statusText = GameObject.FindObjectOfType<Text>();
     }
 
     // Listen the events related to any change in TrackedImageManager
@@ -25,14 +38,45 @@ public class MultipleImagesTrackingManager : MonoBehaviour
     {
         // Listen to tracked images changed event
         _aRTrackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
+        planeSelectionScript = XROrigin.GetComponent<PlaneSelection>();
 
         // Spawn prefabs for each tracked image and hide them initially
-        foreach (GameObject prefab in prefabsToSpawn)
+        _arObjects["trees"] = new List<GameObject>();
+        _arObjects["buildings"] = new List<GameObject>();
+        _arObjects["streetDecor"] = new List<GameObject>();
+
+        for (int i = 0; i < treesToSpawn.Length; i++)
         {
-            GameObject newARObject = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-            newARObject.name = prefab.name;
-            newARObject.SetActive(false); // Hide initially
-            _arObjects.Add(newARObject.name, newARObject);
+
+            Vector3 prefabPosition = new Vector3(i*2.0f, 0, 0);
+            GameObject newTree = Instantiate(treesToSpawn[i], prefabPosition, Quaternion.identity);
+            newTree.name = treesToSpawn[i].name + i.ToString();
+            newTree.SetActive(false); // Hide initially
+            SimpleGestureInteractor newTreeScript = newTree.GetComponent<SimpleGestureInteractor>();
+            newTreeScript.initalPosition = newTree.transform.position;
+            _arObjects["trees"].Add(newTree);
+        }
+
+        for (int i = 0; i < buildingsToSpawn.Length; i++)
+        {
+            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0);
+            GameObject newBuilding = Instantiate(buildingsToSpawn[i], prefabPosition, Quaternion.identity);
+            newBuilding.name = buildingsToSpawn[i].name + i.ToString();
+            newBuilding.SetActive(false); // Hide initially
+            SimpleGestureInteractor newBuildingScript = newBuilding.GetComponent<SimpleGestureInteractor>();
+            newBuildingScript.initalPosition = newBuilding.transform.position;
+            _arObjects["buildings"].Add(newBuilding);
+        }
+
+        for (int i = 0; i < streetDecorToSpawn.Length; i++)
+        {
+            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0);
+            GameObject newStreetDecor = Instantiate(streetDecorToSpawn[i], prefabPosition, Quaternion.identity);
+            newStreetDecor.name = streetDecorToSpawn[i].name + i.ToString();
+            newStreetDecor.SetActive(false); // Hide initially
+            SimpleGestureInteractor newStreetDecorScript = newStreetDecor.GetComponent<SimpleGestureInteractor>();
+            newStreetDecorScript.initalPosition = newStreetDecor.transform.position;
+            _arObjects["streetDecor"].Add(newStreetDecor);
         }
 
     }
@@ -42,6 +86,22 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         // Unsubscribe from tracked images changed event
         _aRTrackedImageManager.trackedImagesChanged -= OnTrackedImageChanged;
 
+    }
+
+
+    private void Update()
+    {
+        if (planeSelectionScript.selectedPlane != null && enableMarkerTracking == false)
+        {
+            statusText.text = "You may now start looking for markers!";
+            _aRTrackedImageManager.enabled = true;
+            enableMarkerTracking = true;
+        }
+        else if (planeSelectionScript.selectedPlane == null)
+        {
+            statusText.text = "Please select a plane.";
+            _aRTrackedImageManager.enabled = false;
+        }
     }
 
 
@@ -62,39 +122,53 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         foreach (ARTrackedImage trackedImage in eventArgs.removed)
         {
             // show, hide or position the gameobject based on the tracked image
-            _arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
+            //_arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
+
+            for (int i = 0; i < _arObjects[trackedImage.referenceImage.name].Count; i++)
+            {
+                GameObject obj = _arObjects[trackedImage.referenceImage.name][i];
+                if (obj.activeSelf)
+                {
+                    obj.SetActive(false);
+                }
+            }
         }
 
     }
 
     private void UpdateTrackedImage(ARTrackedImage trackedImage)
     {
-        //// check tracking status of the tracked image
-        //if (trackedImage.trackingState == TrackingState.Limited || trackedImage.trackingState == TrackingState.None)
-        //{
-
-        //    _arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
-        //    return;
-        //}
-
-        //// show, hide or position the gameobject based on the tracked image
-        //if (prefabsToSpawn != null)
-        //{
-        //    _arObjects[trackedImage.referenceImage.name].SetActive(true);
-        //    _arObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
-        //}
-
         // Only spawn the object once, when the image is first detected
         if (trackedImage.trackingState == TrackingState.Tracking)
         {
-            GameObject obj = _arObjects[trackedImage.referenceImage.name];
 
-            if (!obj.activeSelf)
+            for ( int i = 0; i < _arObjects[trackedImage.referenceImage.name].Count; i++)
             {
-                obj.SetActive(true);
-                obj.transform.position = trackedImage.transform.position;
-                obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+                GameObject obj = _arObjects[trackedImage.referenceImage.name][i];
+                SimpleGestureInteractor objScript = obj.GetComponent<SimpleGestureInteractor>();
+
+                if (!obj.activeSelf)
+                {
+                    obj.SetActive(true);
+                    obj.transform.position = trackedImage.transform.position + new Vector3(-0.15f + (i * 0.15f), 0, 0); // Offset each object
+                    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+
+
+                } else if (obj.activeSelf == true && objScript.fallen == true) {
+                    obj.transform.position = trackedImage.transform.position + new Vector3(-0.15f + (i * 0.15f), 0, 0); // Offset each object
+                    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+                    objScript.fallen = false;
+                }
             }
+
+            //GameObject obj = _arObjects[trackedImage.referenceImage.name];
+
+            //if (!obj.activeSelf)
+            //{
+            //    obj.SetActive(true);
+            //    obj.transform.position = trackedImage.transform.position;
+            //    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+            //}
         }
 
     }

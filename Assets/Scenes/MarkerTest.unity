@@ -317,14 +317,14 @@ RectTransform:
   m_GameObject: {fileID: 536014262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.8262221, y: 1.8417449, z: 1.8262221}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1659711380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 13, y: 302}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0.2, y: -123.8}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &536014264
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.15585041, a: 1}
+  m_Color: {r: 0.31452474, g: 0.3293191, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -350,17 +350,17 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 25
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
+    m_MinSize: 2
+    m_MaxSize: 50
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Instructions
 --- !u!222 &536014265
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -665,7 +665,7 @@ GameObject:
   - component: {fileID: 1659711378}
   - component: {fileID: 1659711377}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Instructions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1101,10 +1101,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a47555570c2a2e0458759198f9f945f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  prefabsToSpawn:
+  treesToSpawn:
   - {fileID: 7140422697382903702, guid: 47b79637b86a2b944aedd30498db13d3, type: 3}
-  - {fileID: 2759154748330925761, guid: 4bc356e44bafedd46a6d72a5ff541429, type: 3}
+  - {fileID: 8033744314657131064, guid: 83b54dbd24f40884c8fa4bb4deb47de6, type: 3}
+  - {fileID: 7860753646709988392, guid: 6c7237d066bea1343b09608a9f57d6cb, type: 3}
+  buildingsToSpawn:
   - {fileID: 8950786635662513766, guid: 93dbba2c57d87f943a0758c51f2cfb1a, type: 3}
+  - {fileID: 2937819795759571465, guid: d8386d524834d764294d9d54c0504b0f, type: 3}
+  - {fileID: 6066989769930997179, guid: a8402aa59f904f64cbc2e1929e8810f5, type: 3}
+  streetDecorToSpawn:
+  - {fileID: 2759154748330925761, guid: 4bc356e44bafedd46a6d72a5ff541429, type: 3}
+  - {fileID: 1452956325183698356, guid: e94b52204414a3b4293719d0750c5c1b, type: 3}
+  - {fileID: 6576196263613041462, guid: 9cfa951667c236047a15be287c797ada, type: 3}
+  statusText: {fileID: 0}
+  XROrigin: {fileID: 2512387470422636669}
 --- !u!114 &2512387470422636672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1154,6 +1164,7 @@ MonoBehaviour:
   planeManager: {fileID: 0}
   arCamera: {fileID: 0}
   selectedMaterial: {fileID: 2100000, guid: 9157ae927725b4d60803d3c3a35c69b0, type: 2}
+  selectedPlane: {fileID: 0}
 --- !u!4 &2512387470860572925
 Transform:
   m_ObjectHideFlags: 0

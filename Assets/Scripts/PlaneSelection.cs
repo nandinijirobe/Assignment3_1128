@@ -10,7 +10,7 @@ public class PlaneSelection : MonoBehaviour
     public Camera arCamera;
     public Material selectedMaterial;
 
-    private ARPlane selectedPlane = null;
+    public ARPlane selectedPlane = null;
     private GameObject virtualProxy = null;
 
     private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
