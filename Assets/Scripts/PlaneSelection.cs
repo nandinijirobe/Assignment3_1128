@@ -5,35 +5,33 @@ using System.Collections.Generic;
 
 public class PlaneSelection : MonoBehaviour
 {
-    public ARRaycastManager raycastManager;
     public ARPlaneManager planeManager;
     public Camera arCamera;
+
+    // Selected Plane and Material
     public Material selectedMaterial;
-
     public ARPlane selectedPlane = null;
-    private GameObject virtualProxy = null;
-
-    private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     void Awake()
     {
-        raycastManager = GetComponent<ARRaycastManager>();
         planeManager = GetComponent<ARPlaneManager>();
         arCamera = GetComponentInChildren<Camera>();
     }
 
     void Update()
     {
-        // Detect tap
+        // Detect tap from user
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             Touch touch = Input.GetTouch(0);
-            Ray ray = arCamera.ScreenPointToRay(touch.position);
+            Ray ray = arCamera.ScreenPointToRay(touch.position); // Makes a ray from the touch position
 
-            // Try a physics raycast (works because planes have colliders)
+            // Cast the ray to see if it hits any AR planes
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
+                // If we hit a plane, select it
                 ARPlane selectedPlane = hit.collider.GetComponent<ARPlane>();
+               
                 if (selectedPlane != null)
                 {
                     SelectPlane(selectedPlane);
@@ -44,15 +42,12 @@ public class PlaneSelection : MonoBehaviour
 
     void SelectPlane(ARPlane plane)
     {
-
         selectedPlane = plane;
 
-
         // Turn the tapped plane green
-        //plane.GetComponent<MeshRenderer>().material.color = Color.green;
         plane.GetComponent<MeshRenderer>().material = selectedMaterial;
 
-        // Hide all OTHER planes
+        // Hide all other planes
         foreach (ARPlane p in planeManager.trackables)
         {
             if (p != plane)
@@ -63,24 +58,6 @@ public class PlaneSelection : MonoBehaviour
 
         // Stop all plane detection
         planeManager.requestedDetectionMode = PlaneDetectionMode.None;
-
-        virtualProxy = plane.gameObject;
-
-
     }
 
-    public bool IsPlaneSelected()
-    {
-        return planeManager.requestedDetectionMode == PlaneDetectionMode.None;
-    }
-
-    public ARPlane GetSelectedPlane()
-    {
-        return selectedPlane;
-    }
-
-    public GameObject GetVirtualProxy()
-    {
-        return virtualProxy;
-    }
 }

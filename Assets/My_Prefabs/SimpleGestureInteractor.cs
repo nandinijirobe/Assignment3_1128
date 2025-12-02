@@ -35,20 +35,6 @@ public class SimpleGestureInteractor : MonoBehaviour
 
     void Awake()
     {
-
-        //leftButton = GameObject.Find("LeftButton_GameObject").GetComponent<Button>();
-        //if (leftButton == null)
-        //{
-        //    UnityEngine.Debug.LogError("left Buttons not found! Make sure your scene has LeftButton_GameObject and RightButton_GameObject.");
-        //}
-
-        //rightButton = GameObject.Find("RightButton_GameObject").GetComponent<Button>();
-
-        //if (leftButton == null)
-        //{
-        //    UnityEngine.Debug.LogError("right Buttons not found! Make sure your scene has LeftButton_GameObject and RightButton_GameObject.");
-        //}
-
         // Get the AR camera in the scene
         arCamera = Camera.main;
         statusText = GameObject.FindObjectOfType<Text>();
@@ -61,35 +47,6 @@ public class SimpleGestureInteractor : MonoBehaviour
         }
 
         
-    }
-
-    //void Start()
-    //{
-    //    leftButton.onClick.AddListener(RotateLeft);
-    //    rightButton.onClick.AddListener(RotateRight);
-    //}
-
-
-public void RotateLeft()
-    {
-        statusText.text = "Left button clicked";
-        if (isFollowing)
-        {
-            statusText.text = "Rotating left";
-            transform.Rotate(0, -15f, 0); // Rotate left by 15 degrees
-        }
-
-    }
-
-    public void RotateRight()
-    {
-        statusText.text = "Right button clicked";
-        if (isFollowing)
-        {
-            statusText.text = "Rotating Right";
-            transform.Rotate(0, 15f, 0); // Rotate left by 15 degrees
-        }
-
     }
 
     void Update()
@@ -140,12 +97,6 @@ public void RotateLeft()
         }
 
 
-        //if (listenersAdded == false && leftButton != null && rightButton != null) { 
-        //    statusText.text = "Adding listeners";
-        //    leftButton.onClick.AddListener(RotateLeft);
-        //    rightButton.onClick.AddListener(RotateRight);
-        //    listenersAdded = true;
-        //} 
 
          // If following, move the object in front of the camera
          if (isFollowing){
@@ -164,16 +115,8 @@ public void RotateLeft()
         isTouchingPlane = false;
         touchedPlane = null;
 
-  
-        //rb.isKinematic = false;
         rb.useGravity = false;
         fallen = true;
-        //transform.position = initalPosition + Vector3.up * 0.1f;
-
-        //yield return new WaitForFixedUpdate();
-        //transform.position = initalPosition;
-
-
 
         Collider collider = GetComponent<Collider>();
         if (collider == null)

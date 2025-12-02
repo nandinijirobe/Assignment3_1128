@@ -10,11 +10,11 @@ using UnityEngine.XR.ARSubsystems;
 
 public class MultipleImagesTrackingManager : MonoBehaviour
 {
-    //[SerializeField] private GameObject[] prefabsToSpawn; // List of prefabs to spawn for each tracked image
 
     [SerializeField] private GameObject[] treesToSpawn;
     [SerializeField] private GameObject[] buildingsToSpawn;
     [SerializeField] private GameObject[] streetDecorToSpawn;
+    
     public Text statusText;
     private bool enableMarkerTracking = false;
 
