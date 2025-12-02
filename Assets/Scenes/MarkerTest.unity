@@ -358,7 +358,7 @@ MonoBehaviour:
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Instructions
 --- !u!222 &536014265
@@ -1160,7 +1160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f877b74bbc2e9ab4397ca058c10fe5d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaneSelection
-  raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
   arCamera: {fileID: 0}
   selectedMaterial: {fileID: 2100000, guid: 9157ae927725b4d60803d3c3a35c69b0, type: 2}

@@ -32,8 +32,6 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         statusText = GameObject.FindObjectOfType<Text>();
     }
 
-    // Listen the events related to any change in TrackedImageManager
-
     private void Start()
     {
         // Listen to tracked images changed event
@@ -48,35 +46,29 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         for (int i = 0; i < treesToSpawn.Length; i++)
         {
 
-            Vector3 prefabPosition = new Vector3(i*2.0f, 0, 0);
-            GameObject newTree = Instantiate(treesToSpawn[i], prefabPosition, Quaternion.identity);
-            newTree.name = treesToSpawn[i].name + i.ToString();
+            Vector3 prefabPosition = new Vector3(i*2.0f, 0, 0); // set initial position
+            GameObject newTree = Instantiate(treesToSpawn[i], prefabPosition, Quaternion.identity); // instantiate prefab
+            newTree.name = treesToSpawn[i].name + i.ToString(); // set name
             newTree.SetActive(false); // Hide initially
-            SimpleGestureInteractor newTreeScript = newTree.GetComponent<SimpleGestureInteractor>();
-            newTreeScript.initalPosition = newTree.transform.position;
-            _arObjects["trees"].Add(newTree);
+            _arObjects["trees"].Add(newTree); // add it to respective list
         }
 
         for (int i = 0; i < buildingsToSpawn.Length; i++)
         {
-            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0);
-            GameObject newBuilding = Instantiate(buildingsToSpawn[i], prefabPosition, Quaternion.identity);
-            newBuilding.name = buildingsToSpawn[i].name + i.ToString();
+            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0); // set initial position
+            GameObject newBuilding = Instantiate(buildingsToSpawn[i], prefabPosition, Quaternion.identity); // instantiate prefab
+            newBuilding.name = buildingsToSpawn[i].name + i.ToString(); // set name
             newBuilding.SetActive(false); // Hide initially
-            SimpleGestureInteractor newBuildingScript = newBuilding.GetComponent<SimpleGestureInteractor>();
-            newBuildingScript.initalPosition = newBuilding.transform.position;
-            _arObjects["buildings"].Add(newBuilding);
+            _arObjects["buildings"].Add(newBuilding); // add it to respective list
         }
 
         for (int i = 0; i < streetDecorToSpawn.Length; i++)
         {
-            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0);
-            GameObject newStreetDecor = Instantiate(streetDecorToSpawn[i], prefabPosition, Quaternion.identity);
-            newStreetDecor.name = streetDecorToSpawn[i].name + i.ToString();
+            Vector3 prefabPosition = new Vector3(i * 2.0f, 0, 0); // set initial position
+            GameObject newStreetDecor = Instantiate(streetDecorToSpawn[i], prefabPosition, Quaternion.identity); // instantiate prefab
+            newStreetDecor.name = streetDecorToSpawn[i].name + i.ToString(); // set name
             newStreetDecor.SetActive(false); // Hide initially
-            SimpleGestureInteractor newStreetDecorScript = newStreetDecor.GetComponent<SimpleGestureInteractor>();
-            newStreetDecorScript.initalPosition = newStreetDecor.transform.position;
-            _arObjects["streetDecor"].Add(newStreetDecor);
+            _arObjects["streetDecor"].Add(newStreetDecor); // add it to respective list
         }
 
     }
@@ -93,7 +85,7 @@ public class MultipleImagesTrackingManager : MonoBehaviour
     {
         if (planeSelectionScript.selectedPlane != null && enableMarkerTracking == false)
         {
-            statusText.text = "You may now start looking for markers!";
+            statusText.text = "Search for markers!";
             _aRTrackedImageManager.enabled = true;
             enableMarkerTracking = true;
         }
@@ -122,8 +114,6 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         foreach (ARTrackedImage trackedImage in eventArgs.removed)
         {
             // show, hide or position the gameobject based on the tracked image
-            //_arObjects[trackedImage.referenceImage.name].gameObject.SetActive(false);
-
             for (int i = 0; i < _arObjects[trackedImage.referenceImage.name].Count; i++)
             {
                 GameObject obj = _arObjects[trackedImage.referenceImage.name][i];
@@ -141,34 +131,26 @@ public class MultipleImagesTrackingManager : MonoBehaviour
         // Only spawn the object once, when the image is first detected
         if (trackedImage.trackingState == TrackingState.Tracking)
         {
-
             for ( int i = 0; i < _arObjects[trackedImage.referenceImage.name].Count; i++)
             {
                 GameObject obj = _arObjects[trackedImage.referenceImage.name][i];
                 SimpleGestureInteractor objScript = obj.GetComponent<SimpleGestureInteractor>();
 
+                // Position the object at the tracked image position
                 if (!obj.activeSelf)
                 {
                     obj.SetActive(true);
                     obj.transform.position = trackedImage.transform.position + new Vector3(-0.15f + (i * 0.15f), 0, 0); // Offset each object
-                    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+                    obj.transform.rotation = trackedImage.transform.rotation; // keep same rotation as tracked image
 
-
+                // Reset fallen state prefab
                 } else if (obj.activeSelf == true && objScript.fallen == true) {
                     obj.transform.position = trackedImage.transform.position + new Vector3(-0.15f + (i * 0.15f), 0, 0); // Offset each object
-                    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
+                    obj.transform.rotation = trackedImage.transform.rotation; // keep same rotation as tracked image
                     objScript.fallen = false;
                 }
             }
 
-            //GameObject obj = _arObjects[trackedImage.referenceImage.name];
-
-            //if (!obj.activeSelf)
-            //{
-            //    obj.SetActive(true);
-            //    obj.transform.position = trackedImage.transform.position;
-            //    obj.transform.rotation = trackedImage.transform.rotation; // optional: keep orientation
-            //}
         }
 
     }
