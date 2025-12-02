@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.UI;
 using System.Collections;
-using System.Runtime.ExceptionServices;
+//using System.Runtime.ExceptionServices;
 
 
 public class SimpleGestureInteractor : MonoBehaviour
@@ -11,27 +11,16 @@ public class SimpleGestureInteractor : MonoBehaviour
 
     private bool isFollowing = false;        // is the object currently following the camera?
     private Camera arCamera;
-
     private bool isTouchingPlane = false;
     public Text statusText;
-
     private Rigidbody rb;
-
-    private Vector3 firstPosition = Vector3.zero;
-
     private ARPlane touchedPlane = null;
     private Coroutine resetCoroutine = null;
 
-    public Button leftButton;
-    public Button rightButton;
 
-    private bool listenersAdded = false;
-
+    // Information other files will need
     public Vector3 initalPosition = Vector3.zero;
-
     public bool fallen = false;
-
-
 
     void Awake()
     {
@@ -39,20 +28,11 @@ public class SimpleGestureInteractor : MonoBehaviour
         arCamera = Camera.main;
         statusText = GameObject.FindObjectOfType<Text>();
         rb = GetComponent<Rigidbody>();
-        firstPosition = transform.position; // store the initial position
 
-        if (arCamera == null)
-        {
-            UnityEngine.Debug.LogError("AR Camera not found! Make sure your scene has an AR Camera.");
-        }
-
-        
     }
 
     void Update()
     {
-
-        UpdateTouchingUI();
         // Detect tap on this object
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
@@ -66,26 +46,26 @@ public class SimpleGestureInteractor : MonoBehaviour
                     // Toggle follow state
                     isFollowing = !isFollowing;
 
-                    if (!isFollowing)
+                    if (!isFollowing) // If object is no longer following the camera (meaning it was released)
                     {
-                        if (!isTouchingPlane)
+                        if (!isTouchingPlane) // If not touching a plane, let it fall
                         {
-                            statusText.text = "FALLING OMG";
-                            //rb.isKinematic = false; // let physics take over and let it fall down
-                            rb.constraints &= ~RigidbodyConstraints.FreezePositionY; // unfreeze Y
-                            
-                            rb.useGravity = true;
+                            statusText.text = "Falling...";
+                            rb.constraints &= ~RigidbodyConstraints.FreezePositionY; // unfreeze Y contraint so it fall vertically
+                            rb.useGravity = true; // enable gravity so it can fall
+
+                            // Stop any existing reset coroutine and start a new one
                             if (resetCoroutine != null)
                             {
-                                // // Stop any existing reset
+                                // Stop any existing reset
                                 StopCoroutine(resetCoroutine);
                             }
 
+                            // Call goToBackInitalPosition and start counting to 3 seconds
                             resetCoroutine = StartCoroutine(goToBackInitalPosition());
                         }
-                        else {
-                            
-                            // become child of the plane to stay in place
+                        else
+                        { // If touching a plane, make it a child of the plane
                             rb.constraints = RigidbodyConstraints.FreezeAll;
                             transform.SetParent(touchedPlane.transform);
                         }
@@ -97,51 +77,29 @@ public class SimpleGestureInteractor : MonoBehaviour
         }
 
 
-
          // If following, move the object in front of the camera
          if (isFollowing){
-            
-
             Vector3 targetPosition = arCamera.transform.position + arCamera.transform.forward * distanceFromCamera;
             transform.position = targetPosition;
-
-            // Optional: rotate to face the camera
-            //transform.LookAt(arCamera.transform);
         }
     }
 
     private IEnumerator goToBackInitalPosition() {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(3f); // let object fall for 3 seconds
+
+        // Reset so it can't keep falling
         isTouchingPlane = false;
         touchedPlane = null;
-
         rb.useGravity = false;
         fallen = true;
-
-        Collider collider = GetComponent<Collider>();
-        if (collider == null)
-        {
-            statusText.text = "Missing! Re-adding BoxCollider...";
-            BoxCollider newCol = gameObject.AddComponent<BoxCollider>();
-            newCol.enabled = true;
-
-            if (newCol != null) {
-                statusText.text = "Enabled";
-            }
-        } else {
-            statusText.text = "Exists.";
-            collider.enabled = true;
-        }
-
         rb.constraints |= RigidbodyConstraints.FreezePositionY; // freeze Y position again
-        //statusText.text = "You may continue...";
+        statusText.text = "Replaced";
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //statusText.text = "checking if hitting plane...";
         if (collision.collider.CompareTag("HorizontalPlane")) {
-            statusText.text = "YES touching plane";
+            statusText.text = "Ready to Place";
             touchedPlane = collision.collider.GetComponent<ARPlane>();
             isTouchingPlane = true;
         }
@@ -151,27 +109,10 @@ public class SimpleGestureInteractor : MonoBehaviour
     {
         if (collision.collider.CompareTag("HorizontalPlane"))
         {
+            statusText.text = "Do NOT Place";
             isTouchingPlane = false;
             touchedPlane = null;
         }
     }
-
-    private void UpdateTouchingUI()
-    {
-        if (statusText == null) return;
-
-        if (isTouchingPlane)
-        {
-            //statusText.text = "YES touching plane";
-            statusText.color = Color.green;
-        }
-        else
-        {
-            //statusText.text = "NO not touching plane";
-            statusText.color = Color.red;
-        }
-    }
-
     
-
 }
